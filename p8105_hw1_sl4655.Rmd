@@ -7,5 +7,60 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+#load packages
+library(tidyverse)
 ```
 
+# *Problem 0.1*
+This “problem” focuses on the use of R Markdown to write reproducible reports, GitHub for version control, and R Projects to organize your work.
+
+To that end:
+
+* create a public GitHub repo + local R Project; we suggest naming this repo / directory p8105_hw1_YOURUNI (e.g. p8105_hw1_ajg2202 for Jeff), but that’s not required
+* create a single .Rmd file named p8105_hw1_YOURUNI.Rmd that renders to github_document
+* submit a link to your repo via Courseworks
+
+Your solutions to Problems 1 and 2 should be implemented in your .Rmd file, and your git commit history should reflect the process you used to solve these Problems.
+
+# *Problem 0.2*
+This “problem” focuses on correct styling for your solutions to Problems 1 and 2. We will look for:
+
+* meaningful variable / object names
+* readable code (one command per line; adequate whitespace and indentation; etc)
+* clearly-written text to explain code and results
+* a lack of superfluous code (no unused variables are defined; no extra library calls; ect)
+
+# *Problem 1*
+This problem is intended to emphasize variable types and introduce coercion; some awareness of how R treats numeric, character, and factor variables is necessary for working with these data types in practice.
+
+Create a data frame comprised of:
+
+* a random sample of size 8 from a standard Normal distribution
+* a logical vector indicating whether elements of the sample are greater than 0
+* a character vector of length 8
+* a factor vector of length 8, with 3 different factor “levels”
+
+Try to take the mean of each variable in your dataframe. What works and what doesn’t?
+
+In some cases, you can explicitly convert variables from one type to another. Write a code chunk that applies the as.numeric function to the logical, character, and factor variables (please show this chunk but not the output). What happens, and why? Does this help explain what happens when you try to take the mean?
+
+```{r Problem_1_1}
+#Creating an original data frame
+df_original = tibble(
+  vec_numeric = rnorm(8, mean = 0, sd = 1),
+  vec_logical = vec_numeric > 0,
+  vec_character = c("James", "Benedict","Kate","Jennifer","Jake","Morgan","Martin","Natalie"),
+  vec_factor = factor(
+    sample(x = c("A", "B", "C"), size = 8, replace = TRUE)
+  )
+)
+```
+
+In a second code chunk:
+
+* convert the logical vector to numeric, and multiply the random sample by the result
+* convert the logical vector to a factor, and multiply the random sample by the result
+* convert the logical vector to a factor and then convert the result to numeric, and multiply the random sample by the result
+
+```{r Problem_1_2}
+```
