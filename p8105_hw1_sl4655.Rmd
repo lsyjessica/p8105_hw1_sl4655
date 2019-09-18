@@ -5,13 +5,13 @@ date: "September 17, 2019"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 #load packages
 library(tidyverse)
 ```
 
-# *Problem 0.1*
+# _Problem 0.1_
 This “problem” focuses on the use of R Markdown to write reproducible reports, GitHub for version control, and R Projects to organize your work.
 
 To that end:
@@ -22,7 +22,7 @@ To that end:
 
 Your solutions to Problems 1 and 2 should be implemented in your .Rmd file, and your git commit history should reflect the process you used to solve these Problems.
 
-# *Problem 0.2*
+# _Problem 0.2_
 This “problem” focuses on correct styling for your solutions to Problems 1 and 2. We will look for:
 
 * meaningful variable / object names
@@ -30,7 +30,7 @@ This “problem” focuses on correct styling for your solutions to Problems 1 a
 * clearly-written text to explain code and results
 * a lack of superfluous code (no unused variables are defined; no extra library calls; ect)
 
-# *Problem 1*
+# _Problem 1_
 This problem is intended to emphasize variable types and introduce coercion; some awareness of how R treats numeric, character, and factor variables is necessary for working with these data types in practice.
 
 Create a data frame comprised of:
@@ -42,18 +42,25 @@ Create a data frame comprised of:
 
 Try to take the mean of each variable in your dataframe. What works and what doesn’t?
 
-In some cases, you can explicitly convert variables from one type to another. Write a code chunk that applies the as.numeric function to the logical, character, and factor variables (please show this chunk but not the output). What happens, and why? Does this help explain what happens when you try to take the mean?
-
-```{r Problem_1_1}
-#Creating an original data frame
+```{r Problem_1_1, warning = FALSE, collapse = TRUE}
+# Create an original data frame
 df_original = tibble(
   vec_numeric = rnorm(8, mean = 0, sd = 1),
   vec_logical = vec_numeric > 0,
   vec_character = c("James", "Benedict","Kate","Jennifer","Jake","Morgan","Martin","Natalie"),
-  vec_factor = factor(
-    sample(x = c("A", "B", "C"), size = 8, replace = TRUE)
-  )
+  vec_factor = factor(c("A","B","C","B","B","A","C","B"))
 )
+
+# Take the mean of each variable
+mean(pull(df_original, vec_numeric))
+mean(pull(df_original, vec_logical))
+mean(pull(df_original, vec_character))
+mean(pull(df_original, vec_factor))
+```
+* **_Some Observations_**: As we can see from above, by taking the mean of the numeric and logical vectors, we get `r mean(pull(df_original, vec_numeric))` and `r mean(pull(df_original, vec_logical))` respectively. But when it comes to the character vector and the factor, we only get `NA`, because the `mean()` function only works on numeric and logical vectors, otherwise we will get a warning message `argument is not numeric or logical: returning NA`.
+
+In some cases, you can explicitly convert variables from one type to another. Write a code chunk that applies the `as.numeric` function to the logical, character, and factor variables (please show this chunk but not the output). What happens, and why? Does this help explain what happens when you try to take the mean?
+```{r Problem_1_2}
 ```
 
 In a second code chunk:
@@ -62,5 +69,5 @@ In a second code chunk:
 * convert the logical vector to a factor, and multiply the random sample by the result
 * convert the logical vector to a factor and then convert the result to numeric, and multiply the random sample by the result
 
-```{r Problem_1_2}
+```{r Problem_1_3}
 ```
