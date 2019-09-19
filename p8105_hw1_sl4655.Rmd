@@ -37,6 +37,8 @@ This “problem” focuses on correct styling for your solutions to Problems 1 a
 # _Problem 1_
 This problem is intended to emphasize variable types and introduce coercion; some awareness of how R treats numeric, character, and factor variables is necessary for working with these data types in practice.
 
+## Create a data frame
+
 Create a data frame comprised of:
 
 * a random sample of size 8 from a standard Normal distribution
@@ -65,6 +67,7 @@ mean(pull(df_1, vec_factor))
                     and `r round(mean(pull(df_1, vec_logical)), 3)` respectively. 
 But when it comes to the character vector and the factor, we only get `NA`, because the `mean()` function only works on numeric and logical vectors, otherwise we will get a warning message `argument is not numeric or logical: returning NA`.
 
+## Coersion as.numeric
 
 In some cases, you can explicitly convert variables from one type to another. Write a code chunk that applies the `as.numeric` function to the logical, character, and factor variables (please show this chunk but not the output). What happens, and why? Does this help explain what happens when you try to take the mean?
 ```{r numeric, eval = FALSE}
@@ -77,6 +80,7 @@ as.numeric(pull(df_1, vec_factor))
     * For character variables, the outcome is `NA` and a warning shows `NAs introduced by coercion`, which means that character variables cannot be coersed into numeric ones. That would explain why the `mean` of the charater variables is `NA`
     * For factor variables, the coersion turns them into their levels, and autmatically assigns the factors with levels from 1 to 3. But, it doesn't explain why the `mean` was `NA` intuitively
 
+## Convert logical vector
 
 In a second code chunk:
 
