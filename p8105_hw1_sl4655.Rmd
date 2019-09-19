@@ -2,11 +2,15 @@
 title: "p8105_hw1_sl4655"
 author: "Shuya Liu"
 date: "September 17, 2019"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 #load packages
 library(tidyverse)
 ```
@@ -42,9 +46,9 @@ Create a data frame comprised of:
 
 Try to take the mean of each variable in your dataframe. What works and what doesn’t?
 
-```{r Problem_1_1, warning = FALSE, collapse = TRUE}
+```{r data_frame_1, warning = FALSE, collapse = TRUE}
 # Create an original data frame
-df_original = tibble(
+df_1 = tibble(
   vec_numeric = rnorm(8, mean = 0, sd = 1),
   vec_logical = vec_numeric > 0,
   vec_character = c("James", "Benedict","Kate","Jennifer","Jake","Morgan","Martin","Natalie"),
@@ -52,19 +56,21 @@ df_original = tibble(
 )
 
 # Take the mean of each variable
-mean(pull(df_original, vec_numeric))
-mean(pull(df_original, vec_logical))
-mean(pull(df_original, vec_character))
-mean(pull(df_original, vec_factor))
+mean(pull(df_1, vec_numeric))
+mean(pull(df_1, vec_logical))
+mean(pull(df_1, vec_character))
+mean(pull(df_1, vec_factor))
 ```
-* **_Some Observations_**: As we can see from above, by taking the mean of the numeric and logical vectors, we get `r mean(pull(df_original, vec_numeric))` and `r mean(pull(df_original, vec_logical))` respectively. But when it comes to the character vector and the factor, we only get `NA`, because the `mean()` function only works on numeric and logical vectors, otherwise we will get a warning message `argument is not numeric or logical: returning NA`.
+* **_Some Observations_**: As we can see from above, by taking the mean of the numeric and logical vectors, we get `r round(mean(pull(df_1, vec_numeric)), 3)` 
+                    and `r round(mean(pull(df_1, vec_logical)), 3)` respectively. 
+But when it comes to the character vector and the factor, we only get `NA`, because the `mean()` function only works on numeric and logical vectors, otherwise we will get a warning message `argument is not numeric or logical: returning NA`.
 
 
 In some cases, you can explicitly convert variables from one type to another. Write a code chunk that applies the `as.numeric` function to the logical, character, and factor variables (please show this chunk but not the output). What happens, and why? Does this help explain what happens when you try to take the mean?
-```{r Problem_1_2, eval = FALSE}
-as.numeric(pull(df_original, vec_logical))
-as.numeric(pull(df_original, vec_character))
-as.numeric(pull(df_original, vec_factor))
+```{r numeric, eval = FALSE}
+as.numeric(pull(df_1, vec_logical))
+as.numeric(pull(df_1, vec_character))
+as.numeric(pull(df_1, vec_factor))
 ```
 * **_Some Observations_**: 
     * For logical variables, the `as.numeric` function coerses the _logical variables_ into _numeric variables_. Specifically, `TRUE` equals 1 and `FALSE` equals 0
@@ -78,27 +84,77 @@ In a second code chunk:
 * convert the logical vector to a factor, and multiply the random sample by the result
 * convert the logical vector to a factor and then convert the result to numeric, and multiply the random sample by the result
 
-```{r Problem_1_3, collapse = TRUE}
+```{r coercion, collapse = TRUE}
 # Convert the logical vector to numeric
-log_num = as.numeric(pull(df_original, vec_logical))
-log_num * pull(df_original, vec_numeric)
+log_num = as.numeric(pull(df_1, vec_logical))
+log_num * pull(df_1, vec_numeric)
 
 # Covert the logical vector to a factor
-log_fac = factor(pull(df_original, vec_logical))
-log_fac * pull(df_original, vec_numeric)
+log_fac = factor(pull(df_1, vec_logical))
+log_fac * pull(df_1, vec_numeric)
 
 # Convert the logical vector to a factor and then convert the result to numeric
 log_fac_num = as.numeric(log_fac)
-log_fac_num * pull(df_original, vec_numeric)
+log_fac_num * pull(df_1, vec_numeric)
 ```
 
 
 # _Problem 2_
-This problem focuses the use of inline R code, plotting, and the behavior of ggplot for variables of different types.
+This problem focuses the use of inline R code, plotting, and the behavior of `ggplot` for variables of different types.
 
-Create a data frame comprised of:
-x: a random sample of size 500 from a standard Normal distribution
-y: a random sample of size 500 from a standard Normal distribution
-A logical vector indicating whether x + y > 1
-A numeric vector created by coercing the above logical vector
-A factor vector created by coercing the above logical vector
+* Create a data frame comprised of:
+    * `x`: a random sample of size 500 from a standard Normal distribution
+    * `y`: a random sample of size 500 from a standard Normal distribution
+    * A logical vector indicating whether `x + y > 1`
+    * A numeric vector created by coercing the above logical vector
+    * A factor vector created by coercing the above logical vector
+    
+* Write a short description of your vector using inline R code, including: 
+    * the size of the dataset (using `nrow` and `ncol`) 
+    * the mean, median, and standard deviation of `x` 
+    * the proportion of cases for which `x + y > 1`
+
+## Create a data frame    
+```{r data_frame_2}
+df_2 = tibble(
+  x = rnorm(n = 500, mean = 0, sd = 1),
+  y = rnorm(n = 500, mean = 0, sd = 1),
+  vec_logical = (x + y) > 1,
+  vec_numeric = as.numeric(vec_logical),
+  vec_factor = factor(vec_logical)
+)
+```
+**_Description_**: 
+
+* The dataset has `r nrow(df_2)` rows and `r ncol(df_2)` columns
+* For `x`, 
+    * the mean is `r round(mean(pull(df_2, x)), 3)`
+    * the median is `r round(median(pull(df_2, x)), 3)`
+    * the standard deviation is `r round(sd(pull(df_2, x)), 3)`
+* The proportion of cases for which `x + y > 1` is `r sum(pull(df_2, vec_logical)) / nrow(df_2)`
+
+## Scatterplots
+
+Make a scatterplot of y vs x; color points using the logical variable (adding color = ... inside of aes in your ggplot code should help). Make a second and third scatterplot that color points using the numeric and factor variables, respectively, and comment on the color scales.
+
+* Scatterplot 1
+```{r scatterplot_1}
+# Using the logical variable
+ggplot(df_2, aes(x = x, y = y)) + 
+  geom_point(aes(color = vec_logical))
+```
+
+* Scatterplot 2
+```{r scatterplot_2}
+# Using the numeric variable
+ggplot(df_2, aes(x = x, y = y)) + 
+  geom_point(aes(color = vec_numeric))
+```
+
+* Scatterplot 3
+```{r scatterplot_3}
+# Using the factor variable
+ggplot(df_2, aes(x = x, y = y)) + 
+  geom_point(aes(color = vec_factor))
+```
+
