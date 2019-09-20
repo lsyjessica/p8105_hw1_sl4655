@@ -2,10 +2,7 @@
 title: "p8105_hw1_sl4655"
 author: "Shuya Liu"
 date: "September 17, 2019"
-output: 
-  html_document:
-    toc: true
-    toc_float: true
+output: github_document
 ---
 
 ```{r setup, include = FALSE}
@@ -27,7 +24,7 @@ This problem is intended to emphasize variable types and introduce coercion; som
 * a character vector of length 8
 * a factor vector of length 8, with 3 different factor “levels”
 
-```{r data_frame_1, warning = FALSE, collapse = TRUE}
+```{r data_frame_1}
 # Create an original data frame
 df_1 = tibble(
   vec_numeric = rnorm(8, mean = 0, sd = 1),
@@ -35,7 +32,11 @@ df_1 = tibble(
   vec_character = c("James", "Benedict","Kate","Jennifer","Jake","Morgan","Martin","Natalie"),
   vec_factor = factor(c("B","A","C","B","B","A","C","C"))
 )
+```
 
+##### Try to take the mean of each variable in your dataframe. What works and what doesn’t?
+
+```{r mean, warning = FALSE, collapse = TRUE}
 # Take the mean of each variable
 mean(pull(df_1, vec_numeric))
 mean(pull(df_1, vec_logical))
@@ -43,11 +44,10 @@ mean(pull(df_1, vec_character))
 mean(pull(df_1, vec_factor))
 ```
 
-##### Try to take the mean of each variable in your dataframe. What works and what doesn’t?
-
-* **_Some Observations_**: As we can see from above, by taking the mean of the numeric and logical vectors, we get `r round(mean(pull(df_1, vec_numeric)), 3)` 
-                    and `r round(mean(pull(df_1, vec_logical)), 3)` respectively. 
-But when it comes to the character vector and the factor, we only get `NA`, because the `mean()` function only works on numeric and logical vectors, otherwise we will get a warning message `argument is not numeric or logical: returning NA`.
+* As we can see from above, 
+    * the `mean()` function works for numeric and logic value (taking true as 1 and false as 0),
+    * it doesn't work on character vector and the factor, only returning `NA`.
+        * The reason is that the `mean()` function only works on numeric and logical vectors, and in this case the factors are in characters, so R make the factor and character vectors into a numeric vector
 
 ### Coersion as.numeric
 
@@ -60,10 +60,9 @@ as.numeric(pull(df_1, vec_factor))
 
 ##### What happens, and why? Does this help explain what happens when you try to take the mean?
 
-* **_Some Observations_**: 
-    * For logical variables, the `as.numeric` function coerses the _logical variables_ into _numeric variables_. Specifically, `TRUE` equals 1 and `FALSE` equals 0
-    * For character variables, the outcome is `NA` and a warning shows `NAs introduced by coercion`, which means that character variables cannot be coersed into numeric ones. That would explain why the `mean` of the charater variables is `NA`
-    * For factor variables, the coersion turns them into their levels, and autmatically assigns the factors with levels from 1 to 3. But, it doesn't explain why the `mean` was `NA` intuitively
+* For logical variables, the `as.numeric` function coerses the _logical variables_ into _numeric variables_. Specifically, `TRUE` equals 1 and `FALSE` equals 0
+* For character variables, the outcome is `NA` and a warning shows `NAs introduced by coercion`, which means that character variables cannot be coersed into numeric ones. That would explain why the `mean` of the character variables is `NA`
+* For factor variables, the coersion turns them into their levels, and autmatically assigns the factors with levels from 1 to 3.
 
 ### Convert logical vector
 
@@ -84,6 +83,9 @@ log_fac * pull(df_1, vec_numeric)
 log_fac_num = as.numeric(log_fac)
 log_fac_num * pull(df_1, vec_numeric)
 ```
+* logical to numeric: returns numerical values, because `TRUE` equals 1, and `FAlSE` equals 0
+* factor to character to numeric: returns NAs, because when factors are turned into characters, the as.numeric function will return NA for characters
+* character to factor to numeric: returns numerical value, because characters can turned into factors, and then as.numeric assign numbers to each level of the factor
 
 
 # _Problem 2_
@@ -103,6 +105,8 @@ This problem focuses the use of inline R code, plotting, and the behavior of `gg
 
 ### Create a data frame    
 ```{r data_frame_2}
+set.seed(50) # set.seed() would fix the randomly chosen variables
+
 df_2 = tibble(
   x = rnorm(n = 500, mean = 0, sd = 1),
   y = rnorm(n = 500, mean = 0, sd = 1),
@@ -111,7 +115,6 @@ df_2 = tibble(
   vec_factor = factor(vec_logical)
 )
 ```
-**_Description_**: 
 
 * The dataset has `r nrow(df_2)` rows and `r ncol(df_2)` columns
 * For `x`, 
@@ -126,22 +129,27 @@ Make a scatterplot of y vs x; color points using the logical variable (adding co
 
 ##### Scatterplot 1
 ```{r scatterplot_1}
-# Using the logical variable
-ggplot(df_2, aes(x = x, y = y)) + 
-  geom_point(aes(color = vec_logical))
+# Using the logical variable as determinants for different colors
+plot_1 = ggplot(df_2, aes(x = x, y = y, color = vec_logical)) + 
+  geom_point() + 
+  ggtitle("Color by Logical")
+# Using the numeric variable as determinants for different colors
+plot_2 = ggplot(df_2, aes(x = x, y = y, color = vec_numeric)) + 
+  geom_point() + 
+  ggtitle("Color by Numeric")
+# Using the factor variable as determinants for different colors
+plot_3 = ggplot(df_2, aes(x = x, y = y, color = vec_factor)) + 
+  geom_point() + 
+  ggtitle("Color by Factor")
+
+#Show the plots
+plot_1
+plot_2
+plot_3
 ```
 
-##### Scatterplot 2
-```{r scatterplot_2}
-# Using the numeric variable
-ggplot(df_2, aes(x = x, y = y)) + 
-  geom_point(aes(color = vec_numeric))
-```
 
-##### Scatterplot 3
-```{r scatterplot_3}
-# Using the factor variable
-ggplot(df_2, aes(x = x, y = y)) + 
-  geom_point(aes(color = vec_factor))
+##### Export the first scatterplot
+```{r export}
+ggsave("Plot Color by Logical.png", plot = plot_1)
 ```
-
